@@ -64,6 +64,7 @@ class Popover extends React.Component {
     targetAtom: T.object,
     tipSize: T.number,
     onOuterAction: T.func,
+    recalcOnResize: T.bool
   }
   static defaultProps = {
     tipSize: 7,
@@ -76,6 +77,7 @@ class Popover extends React.Component {
     enterExitTransitionDurationMs: 500,
     children: null,
     refreshIntervalMs: 200,
+    recalcOnResize: false,
     appendTarget: Platform.isClient ? Platform.document.body : null,
   }
   constructor (props) {
@@ -100,7 +102,7 @@ class Popover extends React.Component {
     if (this.props.isOpen) this.enter()
   }
   componentWillReceiveProps (propsNext) {
-    //log(`Component received props!`, propsNext)
+    log("Component received props!", propsNext)
     const willOpen = !this.props.isOpen && propsNext.isOpen
     const willClose = this.props.isOpen && !propsNext.isOpen
 
@@ -111,7 +113,7 @@ class Popover extends React.Component {
     else if (willClose) this.close()
   }
   componentDidUpdate (propsPrev, statePrev) {
-    log("Component did update!")
+    log("Component did update!", propsPrev, statePrev)
 
     const didOpen = !statePrev.toggle && this.state.toggle
     const didClose = statePrev.toggle && !this.state.toggle
@@ -375,6 +377,9 @@ class Popover extends React.Component {
       )} 150ms ease-in`
     }
     this.containerEl.style.transitionProperty = "top, left, opacity, transform"
+    this.containerEl.style.transitionDelay = `${
+      this.props.enterExitTransitionDurationMs
+    }ms`
     this.containerEl.style.transitionDuration = `${
       this.props.enterExitTransitionDurationMs
     }ms`
@@ -436,7 +441,9 @@ class Popover extends React.Component {
 
     this.frameEl.addEventListener("scroll", this.onFrameScroll)
     resizeEvent.on(this.frameEl, this.onFrameResize)
-    resizeEvent.on(this.containerEl, this.onPopoverResize)
+    if(this.props.recalcOnResize) {
+      resizeEvent.on(this.containerEl, this.onPopoverResize)
+    }
     resizeEvent.on(this.targetEl, this.onTargetResize)
 
     /* Track user actions on the page. Anything that occurs _outside_ the Popover boundaries
@@ -462,7 +469,9 @@ class Popover extends React.Component {
     clearInterval(this.checkLayoutInterval)
     this.frameEl.removeEventListener("scroll", this.onFrameScroll)
     resizeEvent.off(this.frameEl, this.onFrameResize)
-    resizeEvent.off(this.containerEl, this.onPopoverResize)
+    if(this.props.recalcOnResize) {
+      resizeEvent.off(this.containerEl, this.onPopoverResize)
+    }
     resizeEvent.off(this.targetEl, this.onTargetResize)
     Platform.document.removeEventListener("mousedown", this.checkForOuterAction)
     Platform.document.removeEventListener(

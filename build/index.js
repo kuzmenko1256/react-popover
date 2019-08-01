@@ -175,7 +175,7 @@ var Popover = function (_React$Component) {
   }, {
     key: "componentWillReceiveProps",
     value: function componentWillReceiveProps(propsNext) {
-      //log(`Component received props!`, propsNext)
+      log("Component received props!", propsNext);
       var willOpen = !this.props.isOpen && propsNext.isOpen;
       var willClose = this.props.isOpen && !propsNext.isOpen;
 
@@ -187,7 +187,7 @@ var Popover = function (_React$Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate(propsPrev, statePrev) {
-      log("Component did update!");
+      log("Component did update!", propsPrev, statePrev);
 
       var didOpen = !statePrev.toggle && this.state.toggle;
       var didClose = statePrev.toggle && !this.state.toggle;
@@ -445,6 +445,7 @@ var Popover = function (_React$Component) {
         this.tipEl.style[jsprefix("Transition")] = cssprefix("transform") + " 150ms ease-in";
       }
       this.containerEl.style.transitionProperty = "top, left, opacity, transform";
+      this.containerEl.style.transitionDelay = this.props.enterExitTransitionDurationMs + "ms";
       this.containerEl.style.transitionDuration = this.props.enterExitTransitionDurationMs + "ms";
       this.containerEl.style.transitionTimingFunction = "cubic-bezier(0.230, 1.000, 0.320, 1.000)";
       this.containerEl.style.opacity = "1";
@@ -488,7 +489,9 @@ var Popover = function (_React$Component) {
 
       this.frameEl.addEventListener("scroll", this.onFrameScroll);
       _onResize2.default.on(this.frameEl, this.onFrameResize);
-      _onResize2.default.on(this.containerEl, this.onPopoverResize);
+      if (this.props.recalcOnResize) {
+        _onResize2.default.on(this.containerEl, this.onPopoverResize);
+      }
       _onResize2.default.on(this.targetEl, this.onTargetResize);
 
       /* Track user actions on the page. Anything that occurs _outside_ the Popover boundaries
@@ -510,7 +513,9 @@ var Popover = function (_React$Component) {
       clearInterval(this.checkLayoutInterval);
       this.frameEl.removeEventListener("scroll", this.onFrameScroll);
       _onResize2.default.off(this.frameEl, this.onFrameResize);
-      _onResize2.default.off(this.containerEl, this.onPopoverResize);
+      if (this.props.recalcOnResize) {
+        _onResize2.default.off(this.containerEl, this.onPopoverResize);
+      }
       _onResize2.default.off(this.targetEl, this.onTargetResize);
       _platform2.default.document.removeEventListener("mousedown", this.checkForOuterAction);
       _platform2.default.document.removeEventListener("touchstart", this.checkForOuterAction);
@@ -565,7 +570,8 @@ Popover.propTypes = {
   style: _propTypes2.default.object,
   targetAtom: _propTypes2.default.object,
   tipSize: _propTypes2.default.number,
-  onOuterAction: _propTypes2.default.func
+  onOuterAction: _propTypes2.default.func,
+  recalcOnResize: _propTypes2.default.bool
 };
 Popover.defaultProps = {
   tipSize: 7,
@@ -578,6 +584,7 @@ Popover.defaultProps = {
   enterExitTransitionDurationMs: 500,
   children: null,
   refreshIntervalMs: 200,
+  recalcOnResize: false,
   appendTarget: _platform2.default.isClient ? _platform2.default.document.body : null
 };
 exports.default = Popover;
