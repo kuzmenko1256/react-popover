@@ -491,8 +491,8 @@ var Popover = function (_React$Component) {
       _onResize2.default.on(this.frameEl, this.onFrameResize);
       if (this.props.recalcOnResize) {
         _onResize2.default.on(this.containerEl, this.onPopoverResize);
+        _onResize2.default.on(this.targetEl, this.onTargetResize);
       }
-      _onResize2.default.on(this.targetEl, this.onTargetResize);
 
       /* Track user actions on the page. Anything that occurs _outside_ the Popover boundaries
       should close the Popover. */
@@ -515,8 +515,8 @@ var Popover = function (_React$Component) {
       _onResize2.default.off(this.frameEl, this.onFrameResize);
       if (this.props.recalcOnResize) {
         _onResize2.default.off(this.containerEl, this.onPopoverResize);
+        _onResize2.default.off(this.targetEl, this.onTargetResize);
       }
-      _onResize2.default.off(this.targetEl, this.onTargetResize);
       _platform2.default.document.removeEventListener("mousedown", this.checkForOuterAction);
       _platform2.default.document.removeEventListener("touchstart", this.checkForOuterAction);
       this.hasTracked = false;

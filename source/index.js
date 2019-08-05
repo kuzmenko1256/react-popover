@@ -443,8 +443,8 @@ class Popover extends React.Component {
     resizeEvent.on(this.frameEl, this.onFrameResize)
     if(this.props.recalcOnResize) {
       resizeEvent.on(this.containerEl, this.onPopoverResize)
+      resizeEvent.on(this.targetEl, this.onTargetResize)
     }
-    resizeEvent.on(this.targetEl, this.onTargetResize)
 
     /* Track user actions on the page. Anything that occurs _outside_ the Popover boundaries
     should close the Popover. */
@@ -471,8 +471,8 @@ class Popover extends React.Component {
     resizeEvent.off(this.frameEl, this.onFrameResize)
     if(this.props.recalcOnResize) {
       resizeEvent.off(this.containerEl, this.onPopoverResize)
+      resizeEvent.off(this.targetEl, this.onTargetResize)
     }
-    resizeEvent.off(this.targetEl, this.onTargetResize)
     Platform.document.removeEventListener("mousedown", this.checkForOuterAction)
     Platform.document.removeEventListener(
       "touchstart",
